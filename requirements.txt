@@ -2,6 +2,7 @@ asgiref==3.3.1
 Django==3.1.6
 django-appconf==1.0.4
 django-imagekit==4.0.2
+django-rename-app==0.1.2
 freeze==3.0
 importlib-metadata==3.6.0
 Markdown==3.3.3

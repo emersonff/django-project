@@ -33,14 +33,15 @@ ALLOWED_HOSTS = ['0.0.0.0']
 
 INSTALLED_APPS = [
     'polls.apps.PollsConfig', # resigster app polls
-    'django.contrib.admin',
+    'django.contrib.admin', # if InconsistentMigrationHistory when using a custom user model, comment this and run makmi and mi.
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles', 
-    'storm.apps.StormConfig', # register app storm
+    'blog.apps.BlogConfig', # register app storm
     'user.apps.UserConfig', # register user
+    'django_rename_app', # to rename existing django applications (pip install django-rename-app)
 ]
 
 MIDDLEWARE = [
@@ -138,5 +139,5 @@ SITE_DESCRIPTION = "Personal website"
 SITE_KEYWORDS = "Django, Blog"
 
 
-#
-#AUTH_USER_MODEL = "user.OtherUser"
+#The model to use to represent a User.
+AUTH_USER_MODEL = "user.OtherUser"
