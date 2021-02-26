@@ -128,3 +128,15 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+#Site description
+SITE_DESCRIPTION = "Personal website"
+
+
+#Site keywords
+SITE_KEYWORDS = "Django, Blog"
+
+
+#
+#AUTH_USER_MODEL = "user.OtherUser"

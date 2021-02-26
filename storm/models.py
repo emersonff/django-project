@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.shortcuts import reverse
 
+from django.conf import settings
 import markdown
 import re
 # Create your models here.
@@ -12,7 +13,7 @@ class BigCategory(models.Model):
     name = models.CharField("Big category", max_length = 50) # name of category with Big category as vrebose name
     slug = models.SlugField(unique = True) # generating unique url for each article. A slug is a short label for something
     description = models.TextField(max_length = 240, default = settings.SITE_DESCRIPTION, help_text = "description") # d in seo
-    keywords = models.TextField(max_length = 240, defualt = settings.SITE_KEYWORDS, help_text = "keywords") # k in seo
+    keywords = models.TextField(max_length = 240, default = settings.SITE_KEYWORDS, help_text = "keywords") # k in seo
 
     class Meta: # using class Meta to add extra parameters to a class
         verbose_name = "big category" # if isn`t given, Django will use a munged version of class name which is 'big category'
@@ -29,7 +30,7 @@ class Category(models.Model):
     name = models.CharField("Article category", max_length = 50)
     slug = models.SlugField(unique = True)
     description = models.TextField(max_length = 240, default = settings.SITE_DESCRIPTION, help_text = "description") # d in seo
-    bigcategory = models.ForeignKey(BigCategory, verbose_name = "Big category")# ManyToOne
+    bigcategory = models.ForeignKey(BigCategory, verbose_name = "Big category", null = True, on_delete = models.SET_NULL)# ManyToOne 
 
     class Meta:
         #verbose_name = "category"
@@ -82,19 +83,19 @@ class Keyword(models.Model):
 
 class Article(models.Model):
     IMG_LINK = "/static/images/summary/jpg"
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name = "author")
-    title = models.CharField(max_length = 150)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name = "author", on_delete = models.CASCADE)# delete articles when the user is deleted
+    title = models.CharField(max_length = 100)
     summary = models.TextField(max_length = 240, default = "This is the summary of your article.")
     body = models.TextField()
-    img_link = models.CharField(defualt = IMG_LINK, max_length = 255)# verbose name is 'img link'
+    img_link = models.CharField(default = IMG_LINK, max_length = 255)# verbose name is 'img link'
     create_date = models.DateTimeField(auto_now_add = True)# auto_now_add : Automatically set the field to now when the object is first created.
     update_date = models.DateTimeField(auto_now = True) # auto_now :Automatically set the field to now every time the object is saved.
-    views = models.IntegerField(defualt = 0)
-    likes = model.IntegerField(default = 0)
+    views = models.IntegerField(default = 0)
+    likes = models.IntegerField(default = 0)
     slug = models.SlugField(unique = True)# unique identifier for article
-    category = models.ForeignKey(Category)
+    category = models.ForeignKey(Category, null = True, on_delete = models.SET_NULL)#set to NULL when the category is deleted
     tags = models.ManyToManyField(Tag) #ManyToMany
-    keywords = models.ManyToManyField(KeyWord, help_text = "K in SEO. Usually an article should have 3 to 4 keywords.")
+    keywords = models.ManyToManyField(Keyword, help_text = "K in SEO. Usually an article should have 3 to 4 keywords.")
 
     class Meta:
         ordering = ["-create_date"]# - indicates descending order
@@ -121,13 +122,40 @@ class Article(models.Model):
     def get_next(self):
         return Article.objects.filter(id__gt = self.id).order_by("id").first()
 
-class Activate(models.Model):
-    """announcement"""
-    pass
+class Notice(models.Model):
+    """Public Notice"""
+    text = models.TextField(null = True) # If null = True, Django will store empty values as NULL in database
+    is_active = models.BooleanField(default = False)
+    add_date = models.DateTimeField(auto_now_add = True)
+
+    def __str__(self):
+        return self.id
+
 
 class Carousel(models.Model):
-    pass
+    """"""
+    number = models.IntegerField(help_text = "Number determines the playing order")
+    title = models.CharField(max_length = 100, blank = True, null = True, help_text = "Title can be NULL")
+    content = models.CharField(max_length = 100)
+    img_url = models.CharField(max_length = 200)
+    url = models.CharField(max_length = 200, default = "#", help_text = "Hyperlink for image jump. #: no jumping.")
+
+    class Meta:
+        ordering = ["number", "-id"]
+
+    def __str__(self):
+        return self.content[:25]
+
 
 class FriendLink(models.Model):
-    pass
+    """"""
+    name = models.CharField(max_length = 50)
+    description = models.CharField(max_length = 100, blank = True)
+    link = models.URLField()
+    logo = models.URLField(blank = True)
+    create_date = models.DateTimeField(auto_now_add = True)
+    is_active = models.BooleanField(default = True)
+    is_show = models.BooleanField(default = False)
 
+    class Meta:
+        ordering = ["create_date"]
