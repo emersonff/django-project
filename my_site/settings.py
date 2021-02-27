@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles', 
-    'blog.apps.BlogConfig', # register app storm
+    'blog.apps.BlogConfig', # register app blog
     'user.apps.UserConfig', # register user
     'django_rename_app', # to rename existing django applications (pip install django-rename-app)
 ]

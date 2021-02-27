@@ -82,7 +82,7 @@ class Keyword(models.Model):
 
 
 class Article(models.Model):
-    IMG_LINK = "/static/images/summary/jpg"
+    IMG_LINK = "/static/images/summary.jpg"
     author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name = "author", on_delete = models.CASCADE)# delete articles when the user is deleted
     title = models.CharField(max_length = 100)
     summary = models.TextField(max_length = 240, default = "This is the summary of your article.")
